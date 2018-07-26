@@ -375,9 +375,10 @@ function current_logstate()
 end
 
 # helper function to get the current logger, if enabled for the specified message type
-@noinline function current_logger_for_env(std_level::LogLevel, group, _module)
+function current_logger_for_env(std_level::LogLevel, group, _module)
     logstate = current_logstate()
-    if std_level >= logstate.min_enabled_level || env_override_minlevel(group, _module)
+    if std_level >= logstate.min_enabled_level ||
+       (haskey(ENV, "JULIA_DEBUG") && env_override_minlevel(group, _module))
         return logstate.logger
     end
     return nothing
